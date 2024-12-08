@@ -1,43 +1,23 @@
 function solution(keyinput, board) {
-    let x=0;
-    let y=0; 
+    // 초기 좌표 설정
+    let x = 0, y = 0;
     
-    const arrangeX = Math.floor((board[0]/2))
-    const arrangeY = Math.floor((board[1]/2))          
-          
-    for(let i=0; i<keyinput.length; i++) {
-        if(keyinput[i]==="right") {            
-            if(Math.abs(x)>=arrangeX && x>0) {
-                x=arrangeX
-                continue;
-            }
-            x+=1
-        }
-        
-        if(keyinput[i]==="left") {
-            if(Math.abs(x)>=arrangeX && x<0) {
-                x=-arrangeX
-                continue;
-            }                                    
-            x-=1
-        }        
+    // 맵의 경계 계산
+    const maxX = Math.floor(board[0] / 2);
+    const maxY = Math.floor(board[1] / 2);
+    
+    // 방향키 입력 처리
+    for (let key of keyinput) {
+        if (key === "right") x += 1;
+        if (key === "left") x -= 1;
+        if (key === "up") y += 1;
+        if (key === "down") y -= 1;
 
-        if(keyinput[i]==="up") {
-            if(Math.abs(y)>=arrangeY && y>0) {
-                y=arrangeY;
-                continue;
-            }            
-            y+=1
-        }
-        
-        if(keyinput[i]==="down") {
-            if(Math.abs(y)>=arrangeY && y<0) {
-                y=-arrangeY;
-                continue;            
-            }
-            y-=1
-        }
+        // 이동 범위 제한
+        x = Math.max(-maxX, Math.min(maxX, x));
+        y = Math.max(-maxY, Math.min(maxY, y));
     }
-    const result = [x,y]
-    return result
+    
+    // 최종 좌표 반환
+    return [x, y];
 }
