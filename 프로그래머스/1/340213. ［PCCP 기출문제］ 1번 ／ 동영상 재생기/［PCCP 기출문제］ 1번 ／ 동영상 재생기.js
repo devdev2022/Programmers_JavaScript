@@ -2,77 +2,53 @@ function solution(video_len, pos, op_start, op_end, commands) {
     
     const convertSecond = (time)=> {
         return Number(time.split(":")[0])*60+Number(time.split(":")[1])
-    }
+    }   
     
-    const converToForm = (time)=> {        
-        const minute = String(Math.floor(time / 60)).padStart(2, "0");
-        const second = String(time % 60).padStart(2, "0");
-        return `${minute}:${second}`;
-    }
-    
-    const skipOp = (time)=> {
-        const OpStart = convertSecond(op_start)
-        const OpEnd = convertSecond(op_end)   
-        const VideoLen = convertSecond(video_len)
+    const timeCalculation = (time, array)=> {        
         
-        if((time>=OpStart)&&(time<=OpEnd)) {
-           time=OpEnd
-        }
-        return time
-    }
-    
-    const nextTime = (time)=> {        
-        const OpStart = convertSecond(op_start)
-        const OpEnd = convertSecond(op_end)   
-        const VideoLen = convertSecond(video_len)
+        const convertedOpStart = convertSecond(op_start)
+        const convertedOpEnd = convertSecond(op_end)   
+        const convertedVideoLen = convertSecond(video_len)
         
-        time+=10
-        
-        if((time>=OpStart)&&(time<=OpEnd)) {
-            time=OpEnd
-        }
-        
-        if(time>=VideoLen) {
-            time=VideoLen
-        }        
-        return time
-    }
-    
-    const prevTime = (time)=> {
-        const OpStart = convertSecond(op_start)
-        const OpEnd = convertSecond(op_end)   
-        const VideoLen = convertSecond(video_len)
-        
-        time-=10
-        
-        if((time>=OpStart)&&(time<=OpEnd)) {
-            time=OpEnd
-        }
-        if((time<=0)&&OpStart===0){
-            time=OpEnd
-        }            
-        if(time<=0&&OpStart!==0) {
-            time=0
-        }        
-        return time            
-    }
-      
-
-    
-    const timeCalculation = (time, array)=> {                
-        
-        let convertedTime = convertSecond(time)  
-        convertedTime = skipOp(convertedTime)        
+        let convertedTime = convertSecond(time)        
+                    
+        if((convertedTime>=convertedOpStart)&&(convertedTime<=convertedOpEnd)) {
+           convertedTime=convertedOpEnd
+        } 
                 
         for(let i=0; i<array.length; i++) {
-            if(array[i]==="next") {
-                convertedTime = nextTime(convertedTime)
-            }            
-            if(array[i]==="prev") {
-                convertedTime = prevTime(convertedTime)
-            }                                  
+            if(array[i]==="next") {                                
+                convertedTime=convertedTime+10       
+                if((convertedTime>=convertedOpStart)&&(convertedTime<=convertedOpEnd)) {
+           convertedTime=convertedOpEnd
+        }
+                if(convertedTime>convertedVideoLen) {
+                    convertedTime=convertedVideoLen
+                }
+        
+            }
+            
+            if(array[i]==="prev") {      
+                convertedTime = convertedTime-10                
+                
+                if(convertedTime>=convertedOpStart&&(convertedTime<=convertedOpEnd)) {
+                    convertedTime=convertedOpEnd
+                }                
+                if(convertedTime<=0) {
+                    if(convertedOpStart!==0) {
+                        convertedTime = 0
+                    }
+                    
+                    if(convertedOpStart===0) {
+                        convertedTime = convertedOpEnd
+                    }
+                }
+            }
         }        
-        return converToForm(convertedTime)
-    }    
-    return timeCalculation(pos,commands)            
+        const minute = Math.floor(convertedTime/60)<10 ? String(Math.floor(convertedTime / 60)).padStart(2, '0') : Math.floor(convertedTime/60).toString();
+        const second = convertedTime%60===0 ? "00" : String((convertedTime%60)).padStart(2, '0')
+        const result = [minute, ":", second];
+        return result.join("");
+    }     
+    return timeCalculation(pos,commands)        
 }
